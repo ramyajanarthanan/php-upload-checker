@@ -5,18 +5,18 @@ php_file_path = File.expand_path("test.php", __dir__)
 csv_file = File.expand_path("sites.csv", __dir__)
 browser = Watir::Browser.new(:chrome, headless: true)
 
-puts "🔍 Starting PHP upload check...\n"
+puts " Starting PHP upload check...\n"
 
 CSV.foreach(csv_file, headers: true) do |row|
   site_url = row['url']
-  puts "\n🌐 Testing site: #{site_url}"
+  puts "\n Testing site: #{site_url}"
 
   begin
     browser.goto(site_url)
 
     file_input = browser.file_field
     unless file_input.exists?
-      puts "⚠️  No file input field found."
+      puts "  No file input field found."
       next
     end
 
@@ -30,22 +30,22 @@ CSV.foreach(csv_file, headers: true) do |row|
     elsif browser.form.exists?
       browser.form.submit
     else
-      puts "⚠️ No submit button or form found."
+      puts "No submit button or form found."
       next
     end
 
     sleep 2
 
     if browser.text.match?(/(not allowed|invalid|forbidden|file type)/i)
-      puts "✅ Upload blocked properly."
+      puts "Upload blocked properly."
     else
-      puts "❌ WARNING: PHP file might have been accepted!"
+      puts "WARNING: PHP file might have been accepted!"
     end
 
   rescue => e
-    puts "❌ Error: #{e.message}"
+    puts "Error: #{e.message}"
   end
 end
 
 browser.close
-puts "\n✅ All sites checked."
+puts "\n All sites checked."
